@@ -9,7 +9,7 @@ flake.render()
 
 # %%
 Actions = ["Left", "Down", "RIght", "Up"]
-N_Iter = 2
+N_Iter = 10
 for iter in range(N_Iter):
     a = flake.action_space.sample()
     curr_s = new_s
