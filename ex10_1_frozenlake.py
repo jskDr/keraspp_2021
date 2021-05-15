@@ -24,4 +24,3 @@ for iter in range(N_Iter):
     flake.render()
     if done:
         break
-# %%
