@@ -86,7 +86,8 @@ def get_g_many(N_Epochs=5, N_Iter=50):
 
 get_g_many()
 
-# %% Calculate V[s]
+# %%
+# Calculate V[s]
 gbuff_df = get_g_many(100)
 V = np.zeros(flake.observation_space.n)
 # N_V[S]: no of G values to calculate V[S]
@@ -101,7 +102,8 @@ V_df = pd.DataFrame({"V": V, "No of Gs": N_V})
 V_df.index.name = 's'
 V_df
 
-# %% Calculate Q[s,a]
+# %% 
+# Calculate Q[s,a]
 gbuff_df = get_g_many(100)
 Q = np.zeros((flake.observation_space.n, flake.action_space.n))
 # N_Q[s,a]: no of G values to calculate Q[s,a]
@@ -156,4 +158,5 @@ def run_with_PI(PI=None, N_Iter = 100, render_flag=False):
             return buff_df
     return None
 
-run_with_PI(PI=PI, N_Iter=1, render_flag=True)
+run_with_PI(PI=PI, render_flag=True)
+# %%

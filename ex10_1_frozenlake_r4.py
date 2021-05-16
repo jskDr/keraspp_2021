@@ -86,7 +86,8 @@ def get_g_many(N_Epochs=5, N_Iter=50):
 
 get_g_many()
 
-# %% Calculate V[s]
+# %%
+# Calculate V[s]
 gbuff_df = get_g_many(100)
 V = np.zeros(flake.observation_space.n)
 # N_V[S]: no of G values to calculate V[S]
@@ -101,8 +102,9 @@ V_df = pd.DataFrame({"V": V, "No of Gs": N_V})
 V_df.index.name = 's'
 V_df
 
-# %% Calculate Q[s,a]
-gbuff_df = get_g_many(100)
+# %% 
+# Calculate Q[s,a]
+gbuff_df = get_g_many(10)
 Q = np.zeros((flake.observation_space.n, flake.action_space.n))
 # N_Q[s,a]: no of G values to calculate Q[s,a]
 N_Q = np.zeros((flake.observation_space.n, flake.action_space.n)) 
@@ -116,44 +118,10 @@ for s in range(flake.observation_space.n):
             N_Q[s,a] = len(Gs_all)
         S_list.append(s)
         A_list.append(a)
-
+Q, N_Q, S_list, A_list
 SA_df = pd.DataFrame({"S": S_list, "A": A_list})
+#Q_df = pd.DataFrame({"S": S_list, "A": A_list, 
+#            "Q": Q.reshape(-1), "No of Gs": N_Q.reshape(-1)})
 Q_df = pd.DataFrame({"Q": Q.reshape(-1), "No of Gs": N_Q.reshape(-1)},
                     index=pd.MultiIndex.from_frame(SA_df))
 Q_df
-
-# %%
-PI = np.argmax(Q,axis=1)
-PI.reshape(4,4)
-
-# %%
-def run_with_PI(PI=None, N_Iter = 100, render_flag=False):
-    """
-    Return buff_df if done, otherwise return None 
-    """
-    s = flake.reset()
-    if render_flag: flake.render()
-    buff_df = pd.DataFrame({"S":[s],"S:(x,y)":[(0,0)], 
-                "R":[0.0], "done":[False], 
-                "A":[0], "A:name": [""]})
-    buff_df.index.name = 'k'
-
-    Actions = ["Left", "Down", "Right", "Up"]
-    for iter in range(N_Iter):
-        if PI is not None:
-            a_k = PI[s]
-        else:
-            a_k = flake.action_space.sample()
-        buff_df.loc[iter,'A':"A:name"] = (a_k, Actions[a_k])
-        s, r, done, info = flake.step(a_k)
-        if render_flag: flake.render()
-        new_df = pd.DataFrame({"S":[s], "S:(x,y)":[(s%4,s//4)],
-                                "R":[r], "done":[done], 
-                                "A":[0], "A:name": [""]})
-        buff_df = buff_df.append(new_df, ignore_index=True)
-        buff_df.index.name = 'k'
-        if done:
-            return buff_df
-    return None
-
-run_with_PI(PI=PI, N_Iter=1, render_flag=True)
