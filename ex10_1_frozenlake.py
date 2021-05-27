@@ -78,7 +78,7 @@ def get_g_many(N_Epochs=5, N_Iter=50):
     for epoch in range(N_Epochs):
         buff_df = get_g(N_Iter) 
         if buff_df is not None:
-            if epoch == 0:
+            if gbuff_df is None:
                 gbuff_df = buff_df
             else:
                 gbuff_df = gbuff_df.append(buff_df)
