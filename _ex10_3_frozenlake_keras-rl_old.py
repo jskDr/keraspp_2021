@@ -52,7 +52,7 @@ def run_with_PI_exploration(PI=None, exploration=0.2, N_Iter = 100, render_flag=
 buff_df = run_with_PI_exploration(PI, exploration=0.2, N_Iter=100)
 buff_df
 
-def q_learning(N_epoch=1000, N_Iter=100, learning_rate=0.01, exploration=0.2, trace_flag=False):
+def q_learning(N_epoch=1000, N_Iter=100, learning_rate=0.01, exploration=0.2, gamma=0.9, trace_flag=False):
     """
     return PI 1-D integer array if trace_flag is False 
     else return PI_array 2-D integer array 
@@ -68,7 +68,7 @@ def q_learning(N_epoch=1000, N_Iter=100, learning_rate=0.01, exploration=0.2, tr
             S, A = buff_df.S[k], buff_df.A[k]
             S_next, R_next = buff_df.S[k+1], buff_df.R[k+1]
             # print(k, S, A, S_next, R_next)
-            Q_new = R_next + np.max(Q[S_next])
+            Q_new = R_next + gamma * np.max(Q[S_next])
             Q[S,A] += learning_rate * (Q_new - Q[S,A])
 
         PI = np.argmax(Q,axis=1)

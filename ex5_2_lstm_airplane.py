@@ -1,3 +1,4 @@
+# %% 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +8,7 @@ import seaborn as sns
 
 from keraspp import skeras
 
-
+# %%
 def main():        
     machine = Machine() 
     machine.run(epochs=400)
@@ -121,3 +122,4 @@ def get_Xy(data, D=12):
 
 if __name__ == '__main__':
     main()
+# %%
