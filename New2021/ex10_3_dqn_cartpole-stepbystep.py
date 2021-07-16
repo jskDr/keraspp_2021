@@ -1,6 +1,5 @@
 # %%
 %matplotlib inline
-intermediate_test = True
 
 import numpy as np
 import random
@@ -20,9 +19,22 @@ def create_q_model(num_states, num_actions):
     action = Dense(num_actions, activation="linear")(layer)
     return Model(inputs=inputs, outputs=action)
 
-if intermediate_test:
-    model = create_q_model(4,2)
-    model.summary()
+model = create_q_model(4,2)
+model.summary()
+
+#%%
+def get_env_model():
+    env = gym.make('CartPole-v1')
+    num_states = env.observation_space.shape[0]
+    num_actions = env.action_space.n
+    model = create_q_model(num_states, num_actions)
+    return env, model
+
+env, model = get_env_model()
+env.reset()
+env.render()
+#%%
+env.close()
 
 #%%
 def train(model):
@@ -34,17 +46,10 @@ def train(model):
         predicts = model(states)
     print('Completed!')
 
-def get_env_model():
-    env = gym.make('CartPole-v1')
-    num_states = env.observation_space.shape[0]
-    num_actions = env.action_space.n
-    model = create_q_model(num_states, num_actions)
-    return env, model
 
-if intermediate_test:
-    env, model = get_env_model()
-    print(model.summary())
-    train(model)
+
+env, model = get_env_model()
+train(model)
 
 # %%
 class World_00:
@@ -64,9 +69,8 @@ class World_00:
             predicts = self.model(states)
         print('Completed!')
 
-if intermediate_test:
-    new_world = World_00()
-    new_world.train()
+new_world = World_00()
+new_world.train()
 
 # %%
 def env_test_model_memory(memory, env, model, n_episodes=1000, 
@@ -124,12 +128,11 @@ class World_01(World_00):
             grads = tape.gradient(loss, model_w)
             self.optimizer.apply_gradients(zip(grads, model_w))
 
-if intermediate_test:
-    new_world = World_01()
-    new_world.trial(flag_render=True)
-    new_world.train_memory()
-    new_world.env.close()
-    print('Completed!')
+new_world = World_01()
+new_world.trial(flag_render=True)
+new_world.train_memory()
+new_world.env.close()
+print('Completed!')
 
 # %%
 class World_02(World_01):
@@ -169,16 +172,7 @@ class World_02(World_01):
             self.update_t_model()
             print(f'Episode: {e:5d} -->  Score: {score:3.1f}')   
 
-if intermediate_test:
-    new_world = World_02()
-    new_world.trials(n_episodes=200)
-    # %%
-    new_world.env.close()
-    print('Completed!')
-
-# %%
-if __name__ == '__main__':
-    env = gym.make('CartPole-v1')
-    state = env.reset()
-    env.render()
-# %%
+new_world = World_02()
+new_world.trials(n_episodes=100)
+new_world.env.close()
+print('Completed!')
