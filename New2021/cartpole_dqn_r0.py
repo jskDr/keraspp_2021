@@ -7,25 +7,18 @@ import random
 from collections import deque
 import matplotlib.pyplot as plt 
 import gym
-from keras import Model, Input
-from keras.layers import Dense #, Input
+from keras import Model
+from keras.layers import Dense, Input
 from keras.optimizers import Adam
 import tensorflow as tf
 
 #%%
-inputs = tf.keras.Input(shape=(3,))
-x = tf.keras.layers.Dense(4, activation=tf.nn.relu)(inputs)
-outputs = tf.keras.layers.Dense(5, activation=tf.nn.softmax)(x)
-model = tf.keras.Model(inputs=inputs, outputs=outputs)
-print(model.summary())
-
-#%%
 def create_q_model(num_states, num_actions):
-    inputs = tf.keras.Input(shape=(num_states,))
-    layer = tf.keras.layers.Dense(32, activation="relu")(inputs)
-    layer = tf.keras.layers.Dense(16, activation="relu")(layer)
-    action = tf.keras.layers.Dense(num_actions, activation="linear")(layer)
-    return tf.keras.Model(inputs=inputs, outputs=action)
+    inputs = Input(shape=num_states)
+    layer = Dense(32, activation="relu")(inputs)
+    layer = Dense(16, activation="relu")(layer)
+    action = Dense(num_actions, activation="linear")(layer)
+    return Model(inputs=inputs, outputs=action)
 
 if intermediate_test:
     model = create_q_model(4,2)

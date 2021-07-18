@@ -10,7 +10,7 @@ import gym
 from keras import Model, Input
 from keras.layers import Dense #, Input
 from keras.optimizers import Adam
-import tensorflow as tf
+#import tensorflow as tf
 
 #%%
 inputs = tf.keras.Input(shape=(3,))
@@ -20,12 +20,21 @@ model = tf.keras.Model(inputs=inputs, outputs=outputs)
 print(model.summary())
 
 #%%
+import keras
+
+model = keras.Sequential()
+model.add(Dense(2, activation="relu"))
+model.add(Dense(3, activation="relu"))
+model.add(Dense(4))
+model.summary()
+
+#%%
 def create_q_model(num_states, num_actions):
-    inputs = tf.keras.Input(shape=(num_states,))
-    layer = tf.keras.layers.Dense(32, activation="relu")(inputs)
-    layer = tf.keras.layers.Dense(16, activation="relu")(layer)
-    action = tf.keras.layers.Dense(num_actions, activation="linear")(layer)
-    return tf.keras.Model(inputs=inputs, outputs=action)
+    inputs = Input(shape=(num_states,))
+    layer = Dense(32, activation="relu")(inputs)
+    layer = Dense(16, activation="relu")(layer)
+    action = Dense(num_actions, activation="linear")(layer)
+    return Model(inputs=inputs, outputs=action)
 
 if intermediate_test:
     model = create_q_model(4,2)
