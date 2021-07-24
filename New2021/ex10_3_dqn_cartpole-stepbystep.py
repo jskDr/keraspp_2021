@@ -30,12 +30,6 @@ def get_env_model():
     model = create_q_model(num_states, num_actions)
     return env, model
 
-env, model = get_env_model()
-env.reset()
-env.render()
-#%%
-env.close()
-
 #%%
 def train(model):
     state_size = 4
@@ -45,8 +39,6 @@ def train(model):
     with tf.GradientTape() as tape:
         predicts = model(states)
     print('Completed!')
-
-
 
 env, model = get_env_model()
 train(model)
