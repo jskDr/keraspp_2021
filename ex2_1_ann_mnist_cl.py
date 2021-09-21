@@ -70,37 +70,7 @@ def Data_func():
 
 # 7. 분류 ANN 학습 결과 그래프 구현
 import matplotlib.pyplot as plt
-
-
-def plot_acc(history, title=None):
-    # summarize history for accuracy
-    if not isinstance(history, dict):
-        history = history.history
-
-    plt.plot(history['accuracy'])
-    plt.plot(history['val_accuracy'])
-    if title is not None:
-        plt.title(title)
-    plt.ylabel('Accuracy')
-    plt.xlabel('Epoch')
-    plt.legend(['Training', 'Verification'], loc=0)
-    # plt.show()
-
-
-def plot_loss(history, title=None):
-    # summarize history for loss
-    if not isinstance(history, dict):
-        history = history.history
-
-    plt.plot(history['loss'])
-    plt.plot(history['val_loss'])
-    if title is not None:
-        plt.title(title)
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['Training', 'Verification'], loc=0)
-    # plt.show()
-
+from keraspp.skeras import plot_loss, plot_acc
 
 # 8. 분류 ANN 학습 및 성능 분석
 def main():
@@ -110,13 +80,11 @@ def main():
     Nout = number_of_class
 
     # model = ANN_models_func(Nin, Nh, Nout)
+    # model = ANN_seq_func(Nin, Nh, Nout)
     # model = ANN_models_class(Nin, Nh, Nout)
     model = ANN_seq_class(Nin, Nh, Nout)
     (X_train, Y_train), (X_test, Y_test) = Data_func()
 
-    ##############################################
-    # Training
-    ##############################################
     history = model.fit(X_train, Y_train, epochs=5, batch_size=100, validation_split=0.2)
     performace_test = model.evaluate(X_test, Y_test, batch_size=100)
     print('Test Loss and Accuracy ->', performace_test)
