@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from sklearn import model_selection
 from keras import models, layers
 import seaborn as sns
-
 from keraspp import skeras
 
 # %%
