@@ -13,7 +13,7 @@ def load_history_history(fname, fold=''):
     return history_history
 
 
-def plot_acc(history, title=None):
+def plot_acc(history, title=None, show_flag=False):
     # summarize history for accuracy
     if not isinstance(history, dict):
         history = history.history
@@ -22,13 +22,14 @@ def plot_acc(history, title=None):
     plt.plot(history['val_accuracy'])
     if title is not None:
         plt.title(title)
-    plt.ylabel('Accracy')
     plt.xlabel('Epoch')
-    plt.legend(['Training data', 'Validation data'], loc=0)
-    # plt.show()
+    plt.ylabel('Accracy')
+    plt.legend(['Training', 'Validation'], loc=0)
+    if show_flag:
+        plt.show()
 
 
-def plot_loss(history, title=None):
+def plot_loss(history, title=None, show_flag=False):
     # summarize history for loss
     if not isinstance(history, dict):
         history = history.history
@@ -37,10 +38,11 @@ def plot_loss(history, title=None):
     plt.plot(history['val_loss'])
     if title is not None:
         plt.title(title)
-    plt.ylabel('Loss')
     plt.xlabel('Epoch')
-    plt.legend(['Training data', 'Validation data'], loc=0)
-    # plt.show()
+    plt.ylabel('Loss')
+    plt.legend(['Training', 'Validation'], loc=0)
+    if show_flag:
+        plt.show()    
 
 
 def plot_history(history):
