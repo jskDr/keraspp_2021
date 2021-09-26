@@ -1,6 +1,3 @@
-"""
-CH 9.1 Applications/Image Augmentation
-"""
 from keras import datasets
 import keras
 assert keras.backend.image_data_format() == 'channels_last'
