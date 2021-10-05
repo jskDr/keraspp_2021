@@ -1,4 +1,8 @@
-# 1. 분류 CNN 패키지 임포트 
+"""
+CNN for image classification
+- MIT License
+- Author: Sungjin Kim
+"""
 from sklearn import model_selection, metrics
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
@@ -10,49 +14,50 @@ from keras.utils import np_utils
 from keras.models import Model
 from keras.layers import Input, Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 
-from keraspp import skeras
-from keraspp import sfile
+from . import skeras
+from . import sfile
 
-# 2. 분류 CNN 모델링
+
 class CNN(Model):
-    def __init__(self, nb_classes): #, in_shape=None):
-        super(CNN,self).__init__() # added 2021-10-01
-        self.nb_classes = nb_classes
-        #self.in_shape = in_shape
-        
-        self.conv2D_A = Conv2D(32, kernel_size=(3, 3), activation='relu')
-        self.conv2D_B = Conv2D(64, (3, 3), activation='relu')
-        self.maxPooling2D_A = MaxPooling2D(pool_size=(2, 2))
-        self.dropout_A = Dropout(0.25)
-        self.flatten = Flatten()
-        
-        self.dense_A = Dense(128, activation='relu')
-        self.dropout_B = Dropout(0.5)
-        self.dense_B = Dense(nb_classes, activation='softmax', name='preds')
-        
-    def call(self, x):
-        nb_classes = self.nb_classes
-        # in_shape = self.in_shape
+    def __init__(model, nb_classes, in_shape=None):
+        model.nb_classes = nb_classes
+        model.in_shape = in_shape
+        model.build_model()
+        super().__init__(model.x, model.y)
+        model.compile()
 
-        #x = Input(in_shape)
+    def build_model(model):
+        nb_classes = model.nb_classes
+        in_shape = model.in_shape
 
-        h = self.conv2D_A(x)
-        h = self.conv2D_B(h)
-        h = self.maxPooling2D_A(h)
-        h = self.dropout_A(h)
-        h = self.flatten(h)
+        x = Input(in_shape)
 
-        h = self.dense_A(h)
-        h = self.dropout_B(h)
+        h = Conv2D(32, kernel_size=(3, 3), activation='relu',
+                   input_shape=in_shape)(x)
+        h = Conv2D(64, (3, 3), activation='relu')(h)
+        h = MaxPooling2D(pool_size=(2, 2))(h)
+        h = Dropout(0.25)(h)
+        h = Flatten()(h)
+        z_cl = h
 
-        y = self.dense_B(h)
-        
-        return y
+        h = Dense(128, activation='relu')(h)
+        h = Dropout(0.5)(h)
+        z_fl = h
 
-# 3. 분류 CNN을 위한 데이터 준비
+        y = Dense(nb_classes, activation='softmax', name='preds')(h)
+
+        model.cl_part = Model(x, z_cl)
+        model.fl_part = Model(x, z_fl)
+
+        model.x, model.y = x, y
+
+    def compile(model):
+        Model.compile(model, loss='categorical_crossentropy',
+                      optimizer='adadelta', metrics=['accuracy'])
+
+
 class DataSet:
-    def __init__(self, X, y, nb_classes, scaling=True, 
-                 test_size=0.2, random_state=0):
+    def __init__(self, X, y, nb_classes, scaling=True, test_size=0.2, random_state=0):
         """
         X is originally vector. Hence, it will be transformed
         to 2D images with a channel (i.e, 3D).
@@ -110,9 +115,9 @@ class DataSet:
             input_shape = X.shape[1:]  # channel is already included.
 
         self.X = X
-        self.input_shape = input_shape    
-    
-# 4. 분류 CNN의 학습 및 성능 평가를 위한 머신 클래스
+        self.input_shape = input_shape
+
+
 class Machine():
     def __init__(self, X, y, nb_classes=2, fig=True):
         self.nb_classes = nb_classes
@@ -128,18 +133,15 @@ class Machine():
     def set_model(self):
         nb_classes = self.nb_classes
         data = self.data
-        self.model = CNN(nb_classes=nb_classes)
-        self.model.compile(loss='categorical_crossentropy',
-                      optimizer='adadelta', metrics=['accuracy'])        
+        self.model = CNN(nb_classes=nb_classes, in_shape=data.input_shape)
+        # cnn_lenet(nb_classes=nb_classes, in_shape=data.input_shape)
 
     def fit(self, epochs=10, batch_size=128, verbose=1):
         data = self.data
         model = self.model
 
-        history = model.fit(data.X_train, data.Y_train, 
-                            batch_size=batch_size, epochs=epochs,
-                            verbose=verbose, 
-                            validation_data=(data.X_test, data.Y_test))
+        history = model.fit(data.X_train, data.Y_train, batch_size=batch_size, epochs=epochs,
+                            verbose=verbose, validation_data=(data.X_test, data.Y_test))
         return history
 
     def run(self, epochs=100, batch_size=128, verbose=1):
@@ -168,14 +170,9 @@ class Machine():
             'history_history.npy', history.history, fold=foldname)
         model.save_weights(os.path.join(foldname, 'dl_model.h5'))
         print('Output results are saved in', foldname)
-
+          
         if fig:
-            plt.figure(figsize=(12, 4))
-            plt.subplot(1, 2, 1)
-            skeras.plot_acc(history)
-            plt.subplot(1, 2, 2)
-            skeras.plot_loss(history)
-            plt.show()
+            skeras.plot_acc_loss(history)
 
         self.history = history
 
