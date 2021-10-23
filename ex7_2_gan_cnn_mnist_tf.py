@@ -1,24 +1,18 @@
 ################################
 # 공통 패키지 불러오기
 ################################
-from keras.datasets import mnist
 import numpy as np
 from PIL import Image
 import math
 import os
 
+from keras import models, layers, optimizers
+from keras.datasets import mnist
 import keras.backend as K
-import tensorflow as tf
 
-
-K.set_image_data_format('channels_first')
 print(K.image_data_format)
 
-################################
-# GAN 모델링
-################################
-from keras import models, layers, optimizers
-
+import tensorflow as tf
 
 def mse_4d(y_true, y_pred):
     return K.mean(K.square(y_pred - y_true), axis=(1,2,3))
@@ -26,9 +20,11 @@ def mse_4d(y_true, y_pred):
 def mse_4d_tf(y_true, y_pred):
     return tf.reduce_mean(tf.square(y_pred - y_true), axis=(1,2,3))
 
-
+################################
+# GAN 모델링
+################################
 class GAN(models.Sequential):
-    def __init__(self, input_dim=64):
+    def __init__(self, input_dim=32): # input_dim = args.n_train = 32
         """
         self, self.generator, self.discriminator are all models
         """
@@ -57,9 +53,10 @@ class GAN(models.Sequential):
 
         model = models.Sequential()
         model.add(layers.Dense(1024, activation='tanh', input_dim=input_dim))
-        model.add(layers.Dense(128 * 7 * 7, activation='tanh'))
+        model.add(layers.Dense(7 * 7 * 128, activation='tanh')) # H, W, C = 7, 7, 128
         model.add(layers.BatchNormalization())
-        model.add(layers.Reshape((128, 7, 7), input_shape=(128 * 7 * 7,)))
+        # The Conv2D op currently only supports the NHWC tensor format on the CPU.
+        model.add(layers.Reshape((7, 7, 128), input_shape=(7 * 7 * 128,)))
         model.add(layers.UpSampling2D(size=(2, 2)))
         model.add(layers.Conv2D(64, (5, 5), padding='same', activation='tanh'))
         model.add(layers.UpSampling2D(size=(2, 2)))
@@ -67,9 +64,10 @@ class GAN(models.Sequential):
         return model
 
     def DISCRIMINATOR(self):
+        # The Conv2D op currently only supports the NHWC tensor format on the CPU. 
         model = models.Sequential()
         model.add(layers.Conv2D(64, (5, 5), padding='same', activation='tanh',
-                                input_shape=(1, 28, 28)))
+                                input_shape=(28, 28, 1)))
         model.add(layers.MaxPooling2D(pool_size=(2, 2)))
         model.add(layers.Conv2D(128, (5, 5), activation='tanh'))
         model.add(layers.MaxPooling2D(pool_size=(2, 2)))
@@ -88,17 +86,16 @@ class GAN(models.Sequential):
         z = self.get_z(ln)
         w = self.generator.predict(z, verbose=0)
         xw = np.concatenate((x, w))
-        y2 = [1] * ln + [0] * ln
+        y2 = np.array([1] * ln + [0] * ln).reshape(-1,1) # Necessary!
         d_loss = self.discriminator.train_on_batch(xw, y2)
 
         # Second trial for training generator
         z = self.get_z(ln)
         self.discriminator.trainable = False
-        g_loss = self.train_on_batch(z, [1] * ln)
+        g_loss = self.train_on_batch(z, np.array([1] * ln).reshape(-1, 1))
         self.discriminator.trainable = True
 
         return d_loss, g_loss
-
 
 ################################
 # GAN 학습하기
@@ -107,20 +104,18 @@ def combine_images(generated_images):
     num = generated_images.shape[0]
     width = int(math.sqrt(num))
     height = int(math.ceil(float(num) / width))
-    shape = generated_images.shape[2:]
+    shape = generated_images.shape[1:3] # (1,2) for NHWC
     image = np.zeros((height * shape[0], width * shape[1]),
                      dtype=generated_images.dtype)
     for index, img in enumerate(generated_images):
         i = int(index / width)
         j = index % width
         image[i * shape[0]:(i + 1) * shape[0],
-        j * shape[1]:(j + 1) * shape[1]] = img[0, :, :]
+        j * shape[1]:(j + 1) * shape[1]] = img[ :, :, 0] # NHWC
     return image
-
 
 def get_x(X_train, index, BATCH_SIZE):
     return X_train[index * BATCH_SIZE:(index + 1) * BATCH_SIZE]
-
 
 def save_images(generated_images, output_fold, epoch, index):
     image = combine_images(generated_images)
@@ -129,10 +124,8 @@ def save_images(generated_images, output_fold, epoch, index):
         output_fold + '/' +
         str(epoch) + "_" + str(index) + ".png")
 
-
 def load_data(n_train):
     (X_train, y_train), (_, _) = mnist.load_data()
-
     return X_train[:n_train]
 
 def train(args):
@@ -148,15 +141,18 @@ def train(args):
     X_train = load_data(n_train)
 
     X_train = (X_train.astype(np.float32) - 127.5) / 127.5
-    X_train = X_train.reshape((X_train.shape[0], 1) + X_train.shape[1:])
+    # The Conv2D op currently only supports the NHWC tensor format on the CPU. The op was given the format: NCHW
+    # X_train = X_train.reshape((X_train.shape[0], 1) + X_train.shape[1:]) # <-- NCHW format 
+    X_train = X_train.reshape(X_train.shape + (1,)) # <-- NHWC format
 
     gan = GAN(input_dim)
 
     d_loss_ll = []
     g_loss_ll = []
     for epoch in range(epochs):
-        print("Epoch is", epoch)
-        print("Number of batches", int(X_train.shape[0] / BATCH_SIZE))
+        if epoch % 10 == 0:
+            print("Epoch is", epoch)
+            print("Number of batches", int(X_train.shape[0] / BATCH_SIZE))
 
         d_loss_l = []
         g_loss_l = []
@@ -176,12 +172,11 @@ def train(args):
         d_loss_ll.append(d_loss_l)
         g_loss_ll.append(g_loss_l)
 
-    gan.generator.save_weights(output_fold + '/' + 'generator', True)
-    gan.discriminator.save_weights(output_fold + '/' + 'discriminator', True)
+    # gan.generator.save_weights(output_fold + '/' + 'generator', True)
+    # gan.discriminator.save_weights(output_fold + '/' + 'discriminator', True)
 
     np.savetxt(output_fold + '/' + 'd_loss', d_loss_ll)
     np.savetxt(output_fold + '/' + 'g_loss', g_loss_ll)
-
 
 ################################
 # GAN 예제 실행하기
