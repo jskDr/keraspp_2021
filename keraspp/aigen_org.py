@@ -31,7 +31,7 @@ class Machine_Generator(aicnn.Machine):
         generator = self.generator
         steps_per_epoch = self.steps_per_epoch
 
-        history = model.fit(
+        history = model.fit_generator(
             generator.flow(data.X_train, data.Y_train, batch_size=batch_size),
             epochs=epochs, steps_per_epoch=steps_per_epoch,
             validation_data=(data.X_test, data.Y_test))

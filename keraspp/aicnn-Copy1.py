@@ -130,7 +130,7 @@ class Machine():
         data = self.data
         self.model = CNN(nb_classes=nb_classes)
         self.model.compile(loss='categorical_crossentropy',
-                      optimizer='adadelta', metrics=['accuracy'])    
+                      optimizer='adadelta', metrics=['accuracy'])        
 
     def fit(self, epochs=10, batch_size=128, verbose=1):
         data = self.data
