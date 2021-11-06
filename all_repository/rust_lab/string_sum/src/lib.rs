@@ -1,3 +1,11 @@
+
+/*
+Compile by:
+$ maturin develop
+
+Notice that it is compatible with both python list and array for input argument. 
+How to return as numpy array is the question now. 
+*/
 use pyo3::prelude::*;
 // use std::convert::TryFrom;
 
