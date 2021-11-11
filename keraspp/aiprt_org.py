@@ -95,14 +95,25 @@ class DataSet(aicnn.DataSet):
             X = self.X
             if X.ndim < 4:  # if X.dim == 4, no need to add a channel rank.
                 N, img_rows, img_cols = X.shape
-                X = X.reshape(X.shape[0], img_rows, img_cols, 1)
-                X = np.concatenate([X, X, X], axis=3)
-                input_shape = (img_rows, img_cols, n_channels)
-            else:
-                N, img_rows, img_cols, Ch = X.shape
-                if Ch == 1:
+                if K.image_dim_ordering() == 'th':
+                    X = X.reshape(X.shape[0], 1, img_rows, img_cols)
+                    X = np.concatenate([X, X, X], axis=1)
+                    input_shape = (n_channels, img_rows, img_cols)
+                else:
+                    X = X.reshape(X.shape[0], img_rows, img_cols, 1)
                     X = np.concatenate([X, X, X], axis=3)
-                input_shape = (img_rows, img_cols, n_channels)
+                    input_shape = (img_rows, img_cols, n_channels)
+            else:
+                if K.image_dim_ordering() == 'th':
+                    N, Ch, img_rows, img_cols = X.shape
+                    if Ch == 1:
+                        X = np.concatenate([X, X, X], axis=1)
+                    input_shape = (n_channels, img_rows, img_cols)
+                else:
+                    N, img_rows, img_cols, Ch = X.shape
+                    if Ch == 1:
+                        X = np.concatenate([X, X, X], axis=3)
+                    input_shape = (img_rows, img_cols, n_channels)
 
             X = preprocess_input(X)
             self.X = X
@@ -148,6 +159,3 @@ class Machine_Generator(aigen.Machine_Generator):
                          n_dense=n_dense, p_dropout=p_dropout, BN_flag=BN_flag,
                          PretrainedModel=PretrainedModel)
 
-        self.model.compile(loss='categorical_crossentropy',
-                           optimizer='adadelta', metrics=['accuracy'])    
-        print('Compile is done!=======================')
