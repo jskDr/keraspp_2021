@@ -9,6 +9,6 @@ int fibo(int n) {
 }
 
 int main() {
-    printf("%d\n", fibo(10));
+    printf("%d\n", fibo(45));
     return 0;
 }

@@ -1,4 +1,4 @@
-function fibo(n)
+function fibo(n::Int)
     if n < 2
         n;
     else
@@ -6,4 +6,4 @@ function fibo(n)
     end
 end
 
-fibo(10)
+println(fibo(45))
