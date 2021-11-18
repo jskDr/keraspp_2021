@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 int fibo(int n) {
     if (n < 2) {
@@ -9,6 +9,6 @@ int fibo(int n) {
 }
 
 int main() {
-    printf("%d\n", fibo(10));
+    std::cout << fibo(45) << std::endl;
     return 0;
 }
