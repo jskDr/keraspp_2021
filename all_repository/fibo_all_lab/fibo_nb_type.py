@@ -1,6 +1,6 @@
-from numba import jit
+from numba import jit, int32
 
-@jit
+@jit(int32(int32))
 def fibo(n):
     if n < 2:
         return n

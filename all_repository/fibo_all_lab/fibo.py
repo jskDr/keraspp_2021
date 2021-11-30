@@ -1,6 +1,3 @@
-from numba import jit
-
-@jit
 def fibo(n):
     if n < 2:
         return n
