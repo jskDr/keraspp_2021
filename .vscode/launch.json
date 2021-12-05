@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "Launch Hello",
+      "request": "launch",
+      "mainClass": "Hello",
+      "projectName": "keraspp_2021_f5555ca0"
+    },
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
@@ -43,7 +50,9 @@
       "debugMode": "workspace",
       "workingDirectory": "${workspaceFolder}",
       "includePackageScopes": true,
-      "loadPackages": ["."]
+      "loadPackages": [
+        "."
+      ]
     },
     {
       "type": "R-Debugger",
