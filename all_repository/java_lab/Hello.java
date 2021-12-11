@@ -11,8 +11,16 @@ public class Hello {
         int age = mypuppy.getAge();
         System.out.println("age = " + age);
 
-        Algo myalgo = new Algo();
+        FactAlgo myalgo = new FactAlgo();
         System.out.println(myalgo.fact(3));
         myalgo.Print(10);
+
+        sort_test();
+    }
+
+    public static void sort_test() {
+        Qsort myQsort = new Qsort();
+        myQsort.qsort_test();
+        myQsort.binsearch_test();
     }
 }

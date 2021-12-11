@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Qsort",
+      "request": "launch",
+      "mainClass": "Qsort",
+      "projectName": "keraspp_2021_f5555ca0"
+    },
+    {
+      "type": "java",
       "name": "Launch Hello",
       "request": "launch",
       "mainClass": "Hello",

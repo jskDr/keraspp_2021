@@ -7,4 +7,7 @@ public class Fact {
             return n * Factorial(n-1);
         }
     }
+    public static void main(String[] args) {
+        System.out.println("Hello, this is Fact class!");
+    }
 }

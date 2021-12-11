@@ -1,6 +1,6 @@
-public class Algo {
+public class FactAlgo {
     // Factorial 
-    static int fact( int n) {
+    public int fact( int n) {
         if (n==1) 
             return 1;
         else if (n==0)
@@ -9,7 +9,7 @@ public class Algo {
             return n * fact(n-1);  
     }
     // Print
-    int Print(int n) {
+    public int Print(int n) {
         if (n == 0)
             return 0;
         else {
