@@ -3,11 +3,14 @@ public class Hello {
     public static void main(String[] args) {
         System.out.println("Hello, World!"); 
         // run();
-        Firstrepeater first_repeater = new Firstrepeater();
-        first_repeater.run();
+        HashingList hs = new HashingList();
+        hs.run();
     }
 
     public static void run() {
+        Firstrepeater first_repeater = new Firstrepeater();
+        first_repeater.run();
+
         Fact afact = new Fact();
         System.out.println(afact.Factorial(4));
 
