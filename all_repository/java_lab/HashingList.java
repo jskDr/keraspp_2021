@@ -3,47 +3,23 @@ public class HashingList {
         return data % tSize;
     }
 
-    public class ListNode {
-        private int key;
-        private int data;
-        private ListNode next;
-        public int getKey() {
-            return key;
-        }
-        public void setKey(int key) {
-            this.key = key;
-        }
-        public int getData() {
-            return data;
-        }
-        public void setData(int data) {
-            this.data = data;
-        }
-        public ListNode getNext() {
-            return next;
-        }
-        public void setNext(ListNode next) {
-            this.next = next;
-        }
-    }
-
     public class HashTableNode {
         private int blockCount;
-        private ListNode startNode;
+        private KeyListNode startNode;
         public int getBlockCount() {
             return blockCount;
         }
         public void setBlockCount(int blockCount) {
             this.blockCount = blockCount;
         }
-        public void setStartNode(ListNode startNode) {
+        public void setStartNode(KeyListNode startNode) {
             this.startNode = startNode;
         }
-        public ListNode getStartNode() {
+        public KeyListNode getStartNode() {
             return startNode;
         }
-        public ListNode getLastNode() {
-            ListNode curNode = startNode, prevNode = startNode;
+        public KeyListNode getLastNode() {
+            KeyListNode curNode = startNode, prevNode = startNode;
             while(curNode != null) {
                 prevNode = curNode;
                 curNode = curNode.getNext();
@@ -90,7 +66,7 @@ public class HashingList {
         }
         public boolean hashSearch(HashTable h, int data) {
             int index = Hash(data, h.getTSize());
-            ListNode node = h.getTable()[index].getStartNode();
+            KeyListNode node = h.getTable()[index].getStartNode();
             while(node != null) {
                 if(node.getData() == data) 
                     return true;
@@ -100,11 +76,11 @@ public class HashingList {
         }
         public int hashInsert(HashTable h, int data) {
             int index;
-            ListNode newNode, lastNode;
+            KeyListNode newNode, lastNode;
             if(!hashSearch(h, data)) {
                 index = Hash(data, h.getTSize()); 
                 // temp = node.getNext();
-                newNode = new ListNode();
+                newNode = new KeyListNode();
                 if(newNode == null) {
                     System.out.println("Memory Error!");
                     return -1;
@@ -135,8 +111,8 @@ public class HashingList {
         }
         public boolean hashDelete(HashTable h, int data) {
             int index = Hash(data, h.getTSize());
-            ListNode node = h.getTable()[index].getStartNode();
-            ListNode prevNode = null;
+            KeyListNode node = h.getTable()[index].getStartNode();
+            KeyListNode prevNode = null;
             while(node != null) {
                 if(node.getData() == data) {
                     if(prevNode == null) {
@@ -156,12 +132,12 @@ public class HashingList {
         }
         public void hashList(HashTable h) {
             HashTableNode[] table = h.getTable();
-            ListNode startNode;
+            KeyListNode startNode;
             for(int i=0; i < table.length; i++) {
                 startNode = table[i].getStartNode();
                 if(startNode != null) {
                     while(startNode != null) {
-                        System.out.println(i + ": Data = " + startNode.data);
+                        System.out.println(i + ": Data = " + startNode.getData());
                         startNode = startNode.getNext();
                     }
                 }
@@ -170,9 +146,20 @@ public class HashingList {
                 System.out.println();
             }
         }
-    }
-
-    public void rehash(HashTable h){
+        public HashTable rehash(HashTable h){
+            int size = h.getTSize() * LOADFACTOR;
+            HashTableNode[] table = h.getTable();
+            HashTable new_h = createHashTable(size * 2);
+ 
+            HashTableNode[] new_h_table = new_h.getTable();
+            for(int i=0; i < h.getTSize(); i++) {
+                for(KeyListNode node = table[i].getStartNode();
+                    node != null; node = node.getNext()) {
+                    hashInsert(new_h, node.getData());
+                }
+            }            
+            return new_h;
+        }
     }
 
     public void run() {
@@ -217,5 +204,12 @@ public class HashingList {
             System.out.println("Data is deleted");
         else 
             System.out.println("No such data exist");    
+        
+        ho.hashInsert(h, 9);
+        ho.hashList(h);
+        HashTable new_h = ho.rehash(h);
+        System.out.println("New Hash table");
+        ho.hashList(new_h);
+        // System.out.format("TSize: %d\n", new_h.getTSize());
     }
 }
