@@ -1,0 +1,443 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "2aca1855-8ca3-470c-9748-7032e9afd2c0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "using Flux"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "ff896715-ba5c-4ac2-aba0-d8a67d474249",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Conv((5, 5), 3 => 16, relu)  \u001b[90m# 1_216 parameters\u001b[39m"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "l = Conv((5,5), 3=>16, relu)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "f93a4c32-40f4-452b-a38d-496c0f53d7c7",
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "LoadError",
+     "evalue": "MethodError: no method matching rand(::Type{Float32}, ::Vector{Int64})\n\u001b[0mClosest candidates are:\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::AbstractArray, \u001b[91m::Type{SA}\u001b[39m) where SA<:StaticArrays.StaticArray at ~/.julia/packages/StaticArrays/deP1N/src/arraymath.jl:55\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::Any) at /opt/julia-1.7.0/share/julia/stdlib/v1.7/Random/src/Random.jl:254\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::Any, \u001b[91m::Integer\u001b[39m, \u001b[91m::Integer...\u001b[39m) at /opt/julia-1.7.0/share/julia/stdlib/v1.7/Random/src/Random.jl:283\n\u001b[0m  ...",
+     "output_type": "error",
+     "traceback": [
+      "MethodError: no method matching rand(::Type{Float32}, ::Vector{Int64})\n\u001b[0mClosest candidates are:\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::AbstractArray, \u001b[91m::Type{SA}\u001b[39m) where SA<:StaticArrays.StaticArray at ~/.julia/packages/StaticArrays/deP1N/src/arraymath.jl:55\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::Any) at /opt/julia-1.7.0/share/julia/stdlib/v1.7/Random/src/Random.jl:254\n\u001b[0m  rand(\u001b[91m::Random.AbstractRNG\u001b[39m, ::Any, \u001b[91m::Integer\u001b[39m, \u001b[91m::Integer...\u001b[39m) at /opt/julia-1.7.0/share/julia/stdlib/v1.7/Random/src/Random.jl:283\n\u001b[0m  ...",
+      "",
+      "Stacktrace:",
+      " [1] top-level scope",
+      "   @ In[35]:4",
+      " [2] eval",
+      "   @ ./boot.jl:373 [inlined]",
+      " [3] include_string(mapexpr::typeof(REPL.softscope), mod::Module, code::String, filename::String)",
+      "   @ Base ./loading.jl:1196"
+     ]
+    }
+   ],
+   "source": [
+    "Nbatch = 10\n",
+    "Size_img = [100, 100, 3]\n",
+    "size_all = [Size_img; Nbatch]\n",
+    "x = rand(Float32, size_all); #"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "7b21bfcf-3194-432f-8017-2a06f54ae6b3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "4-element Vector{Int64}:\n",
+       " 100\n",
+       " 100\n",
+       "   3\n",
+       "  10"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "size_all"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "6f21b0f2-b414-4b9c-b8e9-262788484abe",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2×2 Matrix{Float32}:\n",
+       " 0.0911868  0.216336\n",
+       " 0.824838   0.820189"
+      ]
+     },
+     "execution_count": 39,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rand(Float32, (2, 2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "6f6f53d8-d114-4cd1-b53f-6d06150ae3a6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2,)"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "(2,)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "da0a8e7f-1555-4060-888a-809c7f57b718",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2, 2)"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "(2,2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "4c09f878-baa7-4d9e-8a07-78b2dac13314",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Tuple{Int64, Int64}"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "typeof((2,3))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "f023dc37-64ae-403e-a4a3-293731cfd222",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Vector{Int64} (alias for Array{Int64, 1})"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "typeof([2,3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "5c30ebef-57a4-4634-847b-4eab0c5da4dd",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Matrix{Int64} (alias for Array{Int64, 2})"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "typeof([2 3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "f4400987-c7ba-48ee-831e-1427e6abff46",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1, 2)"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "size([2 3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "id": "57ffcca8-9489-4962-8785-1f9ec3b4f5d3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2,)"
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "size([2; 3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "id": "1c3c1ffc-8af7-4476-8508-e5191c315231",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Vector{Int64} (alias for Array{Int64, 1})"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "typeof([2; 3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "id": "d08e81fc-c739-4181-adae-5e13e55e0116",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1, 2)"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Tuple([1,2])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "6f948fc4-ac42-4339-a34f-929dce82c044",
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "LoadError",
+     "evalue": "MethodError: no method matching (Vector)(::Tuple{Int64, Int64})\n\u001b[0mClosest candidates are:\n\u001b[0m  (Vector)() at /opt/julia-1.7.0/share/julia/base/baseext.jl:38\n\u001b[0m  (Vector)(\u001b[91m::SuiteSparse.CHOLMOD.Dense{T}\u001b[39m) where T at /opt/julia-1.7.0/share/julia/stdlib/v1.7/SuiteSparse/src/cholmod.jl:856\n\u001b[0m  (Vector)(\u001b[91m::SparseArrays.AbstractSparseVector{Tv}\u001b[39m) where Tv at /opt/julia-1.7.0/share/julia/stdlib/v1.7/SparseArrays/src/sparsevector.jl:946\n\u001b[0m  ...",
+     "output_type": "error",
+     "traceback": [
+      "MethodError: no method matching (Vector)(::Tuple{Int64, Int64})\n\u001b[0mClosest candidates are:\n\u001b[0m  (Vector)() at /opt/julia-1.7.0/share/julia/base/baseext.jl:38\n\u001b[0m  (Vector)(\u001b[91m::SuiteSparse.CHOLMOD.Dense{T}\u001b[39m) where T at /opt/julia-1.7.0/share/julia/stdlib/v1.7/SuiteSparse/src/cholmod.jl:856\n\u001b[0m  (Vector)(\u001b[91m::SparseArrays.AbstractSparseVector{Tv}\u001b[39m) where Tv at /opt/julia-1.7.0/share/julia/stdlib/v1.7/SparseArrays/src/sparsevector.jl:946\n\u001b[0m  ...",
+      "",
+      "Stacktrace:",
+      " [1] top-level scope",
+      "   @ In[49]:1",
+      " [2] eval",
+      "   @ ./boot.jl:373 [inlined]",
+      " [3] include_string(mapexpr::typeof(REPL.softscope), mod::Module, code::String, filename::String)",
+      "   @ Base ./loading.jl:1196"
+     ]
+    }
+   ],
+   "source": [
+    "Vector((1,2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "c4d14c02-1aab-4c6a-b96b-d227a200bd39",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "3-element Vector{Int64}:\n",
+       " 1\n",
+       " 2\n",
+       " 3"
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "x = [i for i in (1,2,3)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "f5507bc4-a2df-4f48-94c1-d575b88ce61f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(3,)"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "size(x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "e73006b6-82c1-4aad-96ef-7b9508428ce0",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "3-element Vector{Int64}:\n",
+       " 1\n",
+       " 2\n",
+       " 3"
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "x"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "a0766101-d918-4982-8bb5-5946c82694e9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1-element Vector{Int64}:\n",
+       " 14"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "[1 2 3] * x "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a0ccffe9-b26f-481a-bfe0-52e7fc14ae97",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Julia 1.7.0",
+   "language": "julia",
+   "name": "julia-1.7"
+  },
+  "language_info": {
+   "file_extension": ".jl",
+   "mimetype": "application/julia",
+   "name": "julia",
+   "version": "1.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
