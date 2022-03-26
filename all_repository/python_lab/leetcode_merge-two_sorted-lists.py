@@ -3,6 +3,19 @@ class ListNode(object):
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+    def print(self):
+        node = self
+        while node:
+            print(node.val)
+            node = node.next
+
+def list_to_nodelist(alist):
+    zero_node = ListNode()
+    node = zero_node
+    for a in alist:
+        node.next = ListNode(a)
+        node = node.next
+    return zero_node.next
     
 class Solution(object):
     def mergeTwoLists(self, list1, list2):
@@ -38,7 +51,8 @@ class Solution(object):
 
 if __name__ == "__main__":
     s = Solution()
-    list1 = ListNode(1)
-    list2 = ListNode(2)
+    #list1 = ListNode(1)
+    list1 = list_to_nodelist([1, 2, 4])
+    list2 = list_to_nodelist([1, 3, 4])
     new_list = s.mergeTwoLists(list1, list2)
     new_list.print()
