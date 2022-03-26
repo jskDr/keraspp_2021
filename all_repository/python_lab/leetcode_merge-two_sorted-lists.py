@@ -51,7 +51,6 @@ class Solution(object):
 
 if __name__ == "__main__":
     s = Solution()
-    #list1 = ListNode(1)
     list1 = list_to_nodelist([1, 2, 4])
     list2 = list_to_nodelist([1, 3, 4])
     new_list = s.mergeTwoLists(list1, list2)
