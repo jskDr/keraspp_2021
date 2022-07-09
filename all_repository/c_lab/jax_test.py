@@ -1,5 +1,5 @@
 #%% importing libraries
-from jax import grad, random
+from jax import grad
 from jax import numpy as jnp
 
 #%% preparing data
