@@ -3,9 +3,22 @@ use std::io;
 
 fn main() {
     println!("GuGuDan Game");
-    let (a, b) = show_problem();
-    let answer = ask_answer();
-    provide_result(a, b, answer);
+    println!("============");
+    while(true) {
+        let (a, b) = show_problem();
+        let answer = ask_answer();
+        provide_result(a, b, answer);
+        if !ask_again() {
+            break;
+        }
+    }
+}
+
+fn ask_again() -> bool {
+    println!("Do you want to play again? (y/n)");
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    input.trim() == "y"
 }
 
 fn show_problem() -> (i32, i32) {
